@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Table from Django Dict</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+<div id="tableContainer">
+  <table id="data-table">
+    <tbody id="table-body">
+      <!-- Table content will be generated dynamically -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+    function decodeEntities(encodedString) {
+      const textArea = document.createElement('textarea');
+      textArea.innerHTML = encodedString;
+      return textArea.value;
+    }
+
+    var csv_content = decodeEntities('{{ csv_content|escapejs }}');
+    var dataDict = JSON.parse(csv_content);
+
+    // Assuming each object in dataDict has the same headers
+    var headers = Object.keys(dataDict[0]);
+    console.log(headers);
+
+    // Creating table body
+    var tableBody = document.getElementById('table-body');
+
+    // Create header row
+    var headerRow = document.createElement('tr');
+    headers.forEach(header => {
+      var headerCell = document.createElement('th');
+      headerCell.appendChild(document.createTextNode(header));
+      headerRow.appendChild(headerCell);
+    });
+    tableBody.appendChild(headerRow);
+
+    // Create rows
+    dataDict.forEach(rowData => {
+      var row = document.createElement('tr');
+      headers.forEach(header => {
+        var cell = document.createElement('td');
+        cell.appendChild(document.createTextNode(rowData[header] || ''));
+        row.appendChild(cell);
+      });
+      tableBody.appendChild(row);
+    });
+</script>
+
+</body>
+</html>
